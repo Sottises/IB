@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Lab09 - Ассиметричные шифры</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" >
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center mt-4">
+        <div class="col-auto">
+            <button class="btn btn-primary" onclick="location.href='/ascii'">ASCII</button>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" onclick="location.href='/base64'">Base64</button>
+        </div>
+    </div>
+    <h1>Оригинальное сообщение: <%= originalText %></h1>
+    <h3>Приватный ключ</h3>
+    <p>{ <%= privateKey %> }</p>
+
+    <h3>Параметры публичного ключа</h3>
+    <p>n: <%= n %>, a: <%= a %></p>
+    <p>{ <%= publicKey %> }</p>
+
+    <h3>Зашифрованное сообщение (<%= encodingTime %>мс)</h3>
+    <p>{ <%= encrypted %> }</p>
+
+    <h2>Расшифрованное сообщение (<%= decodingTime %>мс)</h2>
+    <h1><%= decrypted %></h1>
+</div>
+</body>
+</html>

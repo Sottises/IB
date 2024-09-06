@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC4 Encryption</title>
+</head>
+<body>
+    <h2>RC4 Encryption</h2>
+    <label for="plaintext">Enter Text:</label>
+    <textarea id="text" name="text" rows="4" cols="50"></textarea><br><br>
+    <button onclick="encrypt()">Encrypt</button><br><br>
+    <label for="ciphertext">Encrypted Text (Base64):</label>
+    <textarea id="ciphertext" name="ciphertext" rows="4" cols="50" readonly></textarea>
+    <p id="time"></p>
+    <p id="original"></p>
+    
+    <script>
+        function initialize_S_block(n, key) {
+            let S = [];
+            for (let i = 0; i < Math.pow(2, n); i++) {
+                S[i] = i;
+            }
+            let j = 0;
+            for (let i = 0; i < Math.pow(2, n); i++) {
+                j = (j + S[i] + key[i % key.length]) % Math.pow(2, n);
+                // Swap S[i] and S[j]
+                let temp = S[i];
+                S[i] = S[j];
+                S[j] = temp;
+            }
+            return S;
+        }
+
+        function generate_keystream(S, text) {
+            let keystream = [];
+            let i = 0;
+            let j = 0;
+            for (let k = 0; k < text.length; k++) {
+                i = (i + 1) % S.length;
+                j = (j + S[i]) % S.length;
+                // Swap S[i] and S[j]
+                let temp = S[i];
+                S[i] = S[j];
+                S[j] = temp;
+                let t = (S[i] + S[j]) % S.length;
+                let key = S[t];
+                keystream.push(key);
+            }
+            return keystream;
+        }
+
+        function processText(plaintext, key) {
+            let S = initialize_S_block(8, key);
+            let keystream = generate_keystream(S, plaintext);
+
+            let result = [];
+            for (let i = 0; i < plaintext.length; i++) {
+                let encryptedChar = plaintext[i] ^ keystream[i];
+                result.push(String.fromCharCode(encryptedChar));
+            }
+            return result.join('');
+        }
+
+        function encrypt() {
+            let textInput = document.getElementById('text').value;
+            let plaintext = textInput.split('').map(Number);
+
+            let start = performance.now();
+            let key = [];
+            for (let i = 0; i < 6; i++) {
+                key.push(Math.floor(Math.random() * 256));
+            }
+            let ciphertextBase64 = btoa(processText(plaintext, key));
+            let end = performance.now();
+            let timeTaken = end - start;
+
+            document.getElementById('ciphertext').value = ciphertextBase64;
+            document.getElementById('time').innerText = "Encryption Time: " + timeTaken.toFixed(2) + " milliseconds";
+            document.getElementById('original').innerText = "Decryption Text: " + textInput;
+        }
+    </script>
+</body>
+</html>
